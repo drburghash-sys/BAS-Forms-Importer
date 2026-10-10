@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101a30">
+  <meta name="description" content="BAS Forms Importer — استيراد الاستبيانات ومراجعتها دون إعادة كتابة الأسئلة.">
+  <title>BAS Forms Importer | مستورد الاستبيانات</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap topbar">
+      <div class="identity"><img src="./icon.svg" alt="" class="logo"><div><b>BAS Forms Importer</b><small>مستورد الاستبيانات الذكي</small></div></div>
+      <span class="pill"><span class="dot"></span> المعالجة في جهازك</span>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="hero">
+      <div><div class="eyebrow">BAS • SURVEYS</div><h1>استورد الاستبيان،<br><span>من غير إعادة كتابة.</span></h1><p>ارفع نموذجًا محفوظًا، أو ملف أسئلة، أو صورة؛ ثم راجع الأسئلة واستخرج ملفًا جاهزًا لإعادة إنشاء Google Forms بحسابك.</p></div>
+      <div class="hero-stat"><span>١</span><b>ارفع</b><span>٢</span><b>راجع</b><span>٣</span><b>صدّر</b></div>
+    </section>
+    <nav class="steps" aria-label="مراحل العمل"><span class="step active" data-step="1">١ · الاستيراد</span><span class="step" data-step="2">٢ · المراجعة</span><span class="step" data-step="3">٣ · التصدير</span></nav>
+    <section class="panel" id="importPanel">
+      <div class="section-title"><div><h2>استيراد استبيان</h2><p>يمكنك البدء بملف أو لصق نص أسئلة. لن يرفع البرنامج الملف إلى خادم.</p></div><span class="chip">بدون تسجيل دخول</span></div>
+      <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="اختيار ملف للاستيراد">
+        <div class="drop-icon">⇧</div><h3>اضغط لاختيار ملف، أو اسحبه هنا</h3>
+        <p>MHT / MHTML / HTML / PDF / DOCX / TXT / CSV / JSON / XLSX / JPG / PNG / WEBP</p>
+        <span class="btn btn-primary fake-button">اختيار ملف</span><input id="fileInput" type="file" hidden accept=".mht,.mhtml,.html,.htm,.pdf,.docx,.txt,.md,.csv,.json,.xlsx,.xls,.png,.jpg,.jpeg,.webp,.gif">
+      </div>
+      <div class="input-row"><div class="input-area"><label for="urlInput">رابط الاستبيان الأصلي (اختياري)</label><input id="urlInput" dir="ltr" inputmode="url" placeholder="https://docs.google.com/forms/..." autocomplete="off"></div><button id="urlBtn" class="btn btn-outline">محاولة قراءة الرابط</button></div>
+      <div id="urlHint" class="note">روابط Google Forms العامة لا تسمح عادة بقراءة الأسئلة من صفحة أخرى مباشرة بسبب حماية المتصفح (CORS). عند تعذّر ذلك، افتح الرابط واحفظه بصيغة MHT ثم ارفعه هنا.</div>
+      <details class="extras"><summary>أو الصق نص الأسئلة مباشرة</summary><label for="pasteInput">ضع كل سؤال في سطر، وخياراته تحته بشكل نقاط أو أسطر</label><textarea id="pasteInput" rows="6" placeholder="ما مدى رضاك عن التواصل؟&#10;- مرتفع&#10;- متوسط&#10;- منخفض&#10;&#10;هل استفدت من البرنامج؟&#10;- نعم&#10;- لا"></textarea><button id="pasteBtn" class="btn btn-secondary">تحليل النص</button></details>
+      <div class="supported"><b>الصيغ المتاحة:</b><span>صفحات MHT/HTML وJSON ونصوص وCSV مباشرة</span><span>Word وPDF والجداول والصور تحتاج تنزيل محرك قراءة عند أول استخدام واتصالًا بالإنترنت</span></div>
+      <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+    </section>
+
+    <section class="panel" id="editPanel" hidden>
+      <div class="section-title"><div><h2>مراجعة الاستبيان</h2><p>يمكنك تعديل كل سؤال قبل تصديره. الأسئلة غير الواضحة تحتاج مراجعة بشرية.</p></div><button id="startOver" class="btn btn-ghost">استيراد جديد</button></div>
+      <div class="form-meta"><div><label for="formTitle">عنوان الاستبيان</label><input id="formTitle" placeholder="عنوان الاستبيان"></div><div><label for="formDesc">وصف الاستبيان</label><textarea id="formDesc" rows="3" placeholder="وصف اختياري"></textarea></div></div>
+      <div id="metrics" class="metrics"></div>
+      <div id="warning" class="note warning" hidden></div>
+      <div id="questions" class="question-list"></div>
+      <div class="toolbar"><button id="addQuestion" class="btn btn-outline">+ إضافة سؤال</button><button id="previewBtn" class="btn btn-secondary">معاينة للطالبة</button><button id="nextBtn" class="btn btn-primary">متابعة للتصدير ←</button></div>
+    </section>
+
+    <section class="panel" id="exportPanel" hidden>
+      <div class="section-title"><div><h2>الاستبيان جاهز للتصدير</h2><p>الملفات تُنشأ محليًا؛ لن نُرسل أسئلتك إلى أي خدمة.</p></div><button id="backBtn" class="btn btn-ghost">العودة للمراجعة</button></div>
+      <div id="exportStats" class="metrics"></div>
+      <div class="export-grid">
+        <div class="export-card"><div class="export-symbol">{} </div><h3>بيانات الاستبيان JSON</h3><p>نسخة منظمة للاحتفاظ بالأسئلة أو استيرادها لاحقًا إلى هذا البرنامج.</p><button id="jsonBtn" class="btn btn-primary">تنزيل JSON</button></div>
+        <div class="export-card"><div class="export-symbol">GS</div><h3>إنشاء Google Forms</h3><p>نزّل سكربتًا جاهزًا يحتوي أسئلتك لإنشاء نموذج جديد بحسابك، دون كتابة الأسئلة يدويًا.</p><button id="gsBtn" class="btn btn-primary">تنزيل سكربت .gs</button></div>
+        <div class="export-card"><div class="export-symbol">TXT</div><h3>نسخة نصية</h3><p>لتدقيق الأسئلة أو حفظها ونسخها ومشاركتها.</p><button id="txtBtn" class="btn btn-secondary">تنزيل نص الأسئلة</button></div>
+      </div>
+      <div class="guide"><h3>خطوات إنشاء Google Form في حسابك</h3><ol><li>افتح <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener">Apps Script</a> بحساب جوجل الذي تريد ملكية النموذج فيه.</li><li>احذف محتوى ملف <code>Code.gs</code> الافتراضي، وافتح ملف <code>.gs</code> الذي نزّلته وانسخ محتواه إليه.</li><li>احفظ المشروع، وحدد الدالة <code>createImportedForm</code> واضغط «تشغيل» ووافق على صلاحيات الإنشاء.</li><li>من «سجل التنفيذ» انسخ رابط تحرير الاستبيان الجديد ورابط إجابته. لا تنشر رابط التحرير للطالبات.</li></ol><p class="fineprint">هذه الطريقة تستخدم Apps Script مرة واحدة لإنشاء النسخة بحسابك، ولا تتطلب نشر تطبيق ويب أو إعداد قاعدة بيانات. زر الإنشاء المباشر دون تفويض جوجل غير متاح في هذه النسخة.</p></div>
+    </section>
+    <section id="previewPanel" class="panel" hidden><div class="section-title"><h2>معاينة نموذج الإجابة</h2><button id="closePreview" class="btn btn-ghost">إغلاق</button></div><div id="previewBody" class="preview-body"></div></section>
+  </main>
+  <footer class="wrap footer">BAS Forms Importer · نسخة أولية 1.0 · لا تحفظ البيانات على الخادم. <span>راجع صياغة الاستبيان وصلاحية إعادة استخدامه قبل نشره.</span></footer>
+  <script src="./app.js" defer></script>
+</body>
+</html>
